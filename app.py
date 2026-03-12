@@ -8,7 +8,7 @@ from fastai.vision.all import load_learner
 
 
 APP_DIR = Path(__file__).resolve().parent
-MODEL_PATH = APP_DIR / "banana_disease_model.pkl"
+MODEL_PATH = Path("./banana_disease_model.pkl")
 
 METADATA_CANDIDATES = [
     APP_DIR / "model_artifacts" / "model_metadata.json",
