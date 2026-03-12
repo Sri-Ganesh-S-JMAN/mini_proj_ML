@@ -8,14 +8,7 @@ from fastai.vision.all import load_learner
 
 
 APP_DIR = Path(__file__).resolve().parent
-
-# Try local Space paths first, then parent paths for local development.
-MODEL_CANDIDATES = [
-    APP_DIR / "banana_disease_model.pkl",
-    APP_DIR / "model_artifacts" / "learner_export.pkl",
-    APP_DIR.parent.parent / "banana_disease_model.pkl",
-    APP_DIR.parent.parent / "model_artifacts" / "learner_export.pkl",
-]
+MODEL_PATH = APP_DIR / "banana_disease_model.pkl"
 
 METADATA_CANDIDATES = [
     APP_DIR / "model_artifacts" / "model_metadata.json",
@@ -27,15 +20,6 @@ KNOWN_CLASSES = ["cordana", "healthy", "pestalotiopsis", "sigatoka"]
 
 def format_confidence(value: float) -> str:
     return f"{value * 100:.2f}%"
-
-
-def resolve_existing_path(candidates: list[Path], label: str) -> Path:
-    for path in candidates:
-        if path.exists():
-            return path
-    raise FileNotFoundError(
-        f"No {label} found. Checked: {', '.join(str(p) for p in candidates)}"
-    )
 
 
 def load_metadata(candidates: list[Path]) -> dict:
@@ -100,9 +84,12 @@ class BananaLeafDiseasePredictor:
 
 
 def build_predictor() -> BananaLeafDiseasePredictor:
-    model_path = resolve_existing_path(MODEL_CANDIDATES, "model")
+    if not MODEL_PATH.exists():
+        raise FileNotFoundError(
+            f"Model file not found at {MODEL_PATH}. Add banana_disease_model.pkl to the Space root."
+        )
     metadata = load_metadata(METADATA_CANDIDATES)
-    return BananaLeafDiseasePredictor(model_path, metadata)
+    return BananaLeafDiseasePredictor(MODEL_PATH, metadata)
 
 
 PREDICTOR = None
