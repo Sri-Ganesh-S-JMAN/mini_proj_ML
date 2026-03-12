@@ -1,23 +1,31 @@
 import pathlib
+import sys
+
+# THE FIX: This must happen BEFORE importing fastai or torch
+# We are forcing the system to treat WindowsPath as PosixPath globally
+class SimpleWindowsPath(pathlib.PosixPath):
+    def __init__(self, *args, **kwargs):
+        pass
+
+pathlib.WindowsPath = SimpleWindowsPath
+
+# Now import the rest
 import gradio as gr
 from fastai.vision.all import load_learner
 
-# This is the most robust fix for Python 3.13 + Linux + Windows-saved models
-posix_backup = pathlib.PosixPath
-try:
-    pathlib.PosixPath = pathlib.WindowsPath
-    # Load the model while pretending we are on Windows (or vice versa)
-    # This usually resolves the "cannot instantiate WindowsPath" issue
-    learn = load_learner("banana_disease_model.pkl")
-finally:
-    pathlib.PosixPath = posix_backup
+# Load the model
+# The previous error 'res' was just a symptom of this line failing
+learn = load_learner("banana_disease_model.pkl")
 
+# Your training labels (Ensure this order matches your training folders)
 CLASSES = ["cordana", "healthy", "pestalotiopsis", "sigatoka"]
 
 def predict(img):
-    pred, pred_idx, probs = learn.predict(img)
+    # fastai's predict returns (label, index, probabilities)
+    _, _, probs = learn.predict(img)
     return {CLASSES[i]: float(probs[i]) for i in range(len(CLASSES))}
 
+# Simplified Gradio UI
 demo = gr.Interface(
     fn=predict,
     inputs=gr.Image(type="pil"),
