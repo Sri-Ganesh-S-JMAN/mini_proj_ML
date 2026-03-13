@@ -22,4 +22,4 @@ def classifier(img):
     return dict(zip(cat,map(float,probs)))
 
 # %% Untitled.ipynb #f1c040e3-c4d1-4ce4-b4ad-4619c3eee12e
-gr.Interface(fn=classifier,inputs='image',outputs= 'label',examples=['sigatoka.webp','healthy.webp','pestalotiopsis.jpeg','corodona.jpeg'],cache_examples=False).launch(allowed_paths=['.'])
+gr.Interface(fn=classifier,inputs='image',outputs= 'label',examples=['sigatoka.webp','healthy.webp','pestalotiopsis.jpeg','corodona.jpeg'],cache_examples=False).launch(allowed_paths=['.'],share=True)
