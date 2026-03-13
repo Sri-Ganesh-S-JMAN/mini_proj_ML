@@ -6,7 +6,11 @@ __all__ = ['learn', 'cat', 'classifier']
 # %% Untitled.ipynb #46a0af79-2f85-4ad3-a0f3-b5f41a88d055
 from fastai.vision.all import *
 from pathlib import Path
+import pathlib
 import gradio as gr
+
+if pathlib.Path is pathlib.PosixPath:
+    pathlib.WindowsPath = pathlib.PosixPath
 
 # %% Untitled.ipynb #496dee1f-3d64-443c-9a2c-646230d447db
 learn = load_learner('banana_disease_model.pkl')
